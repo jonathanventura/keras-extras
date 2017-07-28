@@ -7,7 +7,10 @@ import tensorflow as tf
 def make_parallel(model, gpu_count):
     def get_slice(data, idx, parts):
         shape = tf.shape(data)
-        size = tf.concat([ shape[:1] // parts, shape[1:] ],axis=0)
+        if idx < parts-1:
+            size = tf.concat([ shape[:1] // parts, shape[1:] ],axis=0)
+        else:
+            size = tf.concat([ [-1], shape[1:] ],axis=0)
         stride = tf.concat([ shape[:1] // parts, shape[1:]*0 ],axis=0)
         start = stride * idx
         return tf.slice(data, start, size)
